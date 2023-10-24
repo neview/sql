@@ -69,7 +69,127 @@ select * from orders;
 
 select * from order_items;
 
-select customers.name,sum(orders.total_amout) as total_amout
+SELECT customers.name, SUM(orders.total_amount) AS total_amount 
+    FROM customers
+    INNER JOIN orders ON customers.id = orders.customer_id 
+    GROUP BY customers.id;
+    
+SELECT customers.name, SUM(orders.total_amount) AS total_amount 
+    FROM customers
+    INNER JOIN orders ON customers.id = orders.customer_id 
+    GROUP BY customers.id
+    ORDER BY total_amount DESC
+    limit 0,3;
+    
+-- 查询每个客户的订单总金额
+select customers.name,sum(orders.total_amount) as total_amount
 	from customers
-	inner join orders on customers.id = orders.customer_id
+    inner join orders on customers.id = orders.customer_id
+    group by customers.id
+    order by total_amount desc;
+    
+-- 查询每个客户的订单总金额，并计算其占比
+select customers.name,sum(orders.total_amount) as total_amount,
+	sum(orders.total_amount) / (select sum(total_amount) from orders) as aaa
+    from customers
+    inner join orders on customers.id = orders.customer_id
     group by customers.id;
+    
+-- 查询每个客户的订单总金额，并列出每个订单的商品清单
+SELECT customers.name, orders.order_date, orders.total_amount, 
+	order_items.product_name, order_items.quantity, order_items.price
+    FROM customers
+    JOIN orders ON customers.id = orders.customer_id
+    JOIN order_items ON orders.id = order_items.order_id
+    ORDER BY customers.name, orders.order_date;
+
+-- 查询每个客户的订单总金额，并列出每个订单的商品清单，同时只显示客户名字姓“张”的客户的记录
+SELECT customers.name, orders.order_date, orders.total_amount, 
+	order_items.product_name, order_items.quantity, order_items.price
+    FROM customers
+    INNER JOIN orders ON customers.id = orders.customer_id
+    INNER JOIN order_items ON orders.id = order_items.order_id
+    WHERE customers.name LIKE '张%'
+    ORDER BY customers.name, orders.order_date;
+
+-- 查询每个客户的订单总金额，并列出每个订单的商品清单，同时只显示订单日期在2022年1月1日到2022年1月3日之间的记录
+SELECT customers.name, orders.order_date,
+	orders.total_amount, order_items.product_name,
+    order_items.quantity, order_items.price
+    FROM customers
+    INNER JOIN orders ON customers.id = orders.customer_id
+    INNER JOIN order_items ON orders.id = order_items.order_id
+    WHERE orders.order_date BETWEEN '2022-01-01' AND '2022-01-03'
+    ORDER BY customers.name, orders.order_date;
+
+-- 查询每个客户的订单总金额，并计算商品数量，只包含商品名称包含“鞋”的商品，商品名用-连接，显示前 3 条记录
+SELECT c.name AS customer_name,
+        SUM(o.total_amount) AS total_amount,
+        COUNT(oi.id) AS total_quantity,
+        GROUP_CONCAT(oi.product_name SEPARATOR '-') AS product_names
+    FROM customers c
+    JOIN orders o ON c.id = o.customer_id
+    JOIN order_items oi ON o.id = oi.order_id
+    WHERE oi.product_name LIKE '%鞋%'
+    GROUP BY c.name
+    ORDER BY total_amount DESC
+    LIMIT 3;
+
+-- 查询存在订单的客户
+SELECT * FROM customers c
+    WHERE EXISTS (
+            SELECT 1 FROM orders o WHERE o.customer_id = c.id
+    );
+        
+-- 将王磊的订单总金额打九折
+SELECT * FROM orders 
+ JOIN customers ON orders.customer_id = customers.id
+ WHERE customers.name = '王磊';
+-- select customers.name,
+--     sum(orders.total_amount)*0.9
+--     from customers
+--     join orders on customers.id = orders.customer_id
+--     WHERE customers.name = '王磊';
+
+select * from order_items;
+
+select * from orders;
+
+-- 开启事务
+START TRANSACTION;
+
+UPDATE order_items SET quantity=1 WHERE order_id=3;
+UPDATE orders SET total_amount=200 WHERE id=3;
+
+-- 回滚（变回原来的数据）
+rollback;
+
+-- 提交（数据修改了）    
+commit;    
+    
+-- 只回滚一部分  开始
+START TRANSACTION;
+
+SAVEPOINT aaa;
+
+UPDATE order_items SET quantity=1 WHERE order_id=3;
+
+SAVEPOINT bbb;
+
+UPDATE orders SET total_amount=200 WHERE id=3;
+
+SAVEPOINT ccc;
+-- 只回滚一部分  结束
+
+-- 回滚到bbb处
+ROLLBACK TO SAVEPOINT bbb;
+
+-- 回滚到ccc处
+ROLLBACK TO SAVEPOINT ccc;
+
+-- 查询当前的事务隔离级别
+select @@transaction_isolation;
+    
+    
+    
+    
