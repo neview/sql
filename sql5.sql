@@ -56,3 +56,7 @@ BEGIN
 	RETURN total;
 END $$
 DELIMITER ;
+
+select * from customers;
+
+create database typeorm_test;
