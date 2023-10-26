@@ -1,5 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from "typeorm"
-import { IdCard } from "./IdCard"
+import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
 
 @Entity()
 export class User {
@@ -15,8 +14,5 @@ export class User {
 
     @Column()
     age: number
-
-    @OneToOne(() => IdCard, (idCard) => idCard.user)
-    idCard: IdCard
 
 }
