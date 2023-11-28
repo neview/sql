@@ -65,20 +65,32 @@ AppDataSource.initialize().then(async () => {
     // console.log(article.map(item => item.tags))
 
     //我把 id 为 2 的文章的标签只保留包含 111 的，并且还改了标题
+    // const entityManager = AppDataSource.manager;
+    // const article = await entityManager.findOne(Article, {
+    //     where: {
+    //         id: 2
+    //     },
+    //     relations: {
+    //         tags: true
+    //     }
+    // });
+    // article.title = 'ccccc';
+    // article.tags = article.tags.filter(item => item.name.includes('ttt111'));
+    // await entityManager.save(article)
+    // // 它会先查出 id 为 2 的 article 有哪些标签，查出了 1、2、3。
+    // // 然后会把他和 id 为 2 的 article 的关系，(2, 2) (2, 3) 从中间表中删除
+    // // 这样就这个 article 就只有 id 为 1 的 tag 了
+
+    // await entityManager.delete(Article, 1);
+    // await entityManager.delete(Tag, 1);
+
     const entityManager = AppDataSource.manager;
-    const article = await entityManager.findOne(Article, {
-        where: {
-            id: 2
-        },
+    const tags = await entityManager.find(Tag, {
         relations: {
-            tags: true
+            articles: true
         }
     });
-    article.title = 'ccccc';
-    article.tags = article.tags.filter(item => item.name.includes('ttt111'));
-    await entityManager.save(article)
-    // 它会先查出 id 为 2 的 article 有哪些标签，查出了 1、2、3。
-    // 然后会把他和 id 为 2 的 article 的关系，(2, 2) (2, 3) 从中间表中删除
-    // 这样就这个 article 就只有 id 为 1 的 tag 了
+
+    console.log(tags);
 
 }).catch(error => console.log(error))
