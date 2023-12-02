@@ -4,6 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import * as crypto from 'crypto';
+import { LoginDto } from './dto/login.dto';
+
 
 function md5(str) {
   const hash = crypto.createHash('md5');
@@ -40,5 +42,19 @@ export class UserService {
       this.logger.error(e, UserService);
       return '注册失败';
     }
+  }
+
+  async login(user: LoginDto) {
+    const foundUser = await this.userRepository.findOneBy({
+      username: user.username
+    })
+    if (!foundUser) {
+      throw new HttpException('用户不存在', 200)
+    }
+
+    if (foundUser.password !== md5(user.password)) {
+      throw new HttpException('密码错误', 200)
+    }
+    return foundUser
   }
 }
