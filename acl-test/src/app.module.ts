@@ -3,8 +3,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
+import { Permission } from './user/entities/permission.entity';
 import { User } from './user/entities/user.entity';
-import { JwtModule } from '@nestjs/jwt';
+import { AaaModule } from './aaa/aaa.module';
+import { BbbModule } from './bbb/bbb.module';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -14,24 +17,20 @@ import { JwtModule } from '@nestjs/jwt';
       port: 3306,
       username: "root",
       password: "guang",
-      database: "login_test",
+      database: "acl_test",
       synchronize: true,
       logging: true,
-      entities: [User],
+      entities: [User, Permission],
       poolSize: 10,
       connectorPackage: 'mysql2',
       extra: {
         authPlugin: 'sha256_password',
       }
     }),
-    JwtModule.register({
-      global: true,
-      secret: 'guang',
-      signOptions: {
-        expiresIn: '7d'
-      }
-    }),
-    UserModule
+    UserModule,
+    AaaModule,
+    BbbModule,
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [AppService],
