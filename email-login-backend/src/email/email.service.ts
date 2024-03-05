@@ -16,9 +16,7 @@ export class EmailService {
       secure: false,
       auth: {
         user: this.configService.get('email_user'),
-        // user: '1282261308@qq.com',
         pass: this.configService.get('email_password')
-        // pass: 'ifsznnwowjfuhdjc'
       }
     })
   }
@@ -28,7 +26,6 @@ export class EmailService {
       from: {
         name: '系统邮件',
         address: this.configService.get('email_user')
-        // address: '1282261308@qq.com'
       },
       to,
       subject,
