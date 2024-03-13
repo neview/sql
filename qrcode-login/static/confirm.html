@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>扫码确认登录</title>
+  </head>
+  <body>
+    <div id="info">是否确认登录 xxx 网站？</div>
+    <button id="confirm">确认登录</button>
+    <button id="cancel">取消</button>
+
+    <button type="button" id="guang">登录光光账号</button>
+    <button type="button" id="dong">登录东东账号</button>
+  </body>
+</html>
+<script>
+  const params = new URLSearchParams(window.location.search.slice(1));
+
+  const id = params.get('id');
+
+  axios.get('http://192.168.110.35:3000/qrcode/scan?id=' + id).catch((e) => {
+    alert('二维码过期');
+  });
+
+  document.getElementById('confirm').addEventListener('click', () => {
+    axios
+      .get('http://192.168.110.35:3000/qrcode/confirm?id=' + id, {
+        headers: {
+          authorization: 'Bearer ' + token,
+        },
+      })
+      .catch((e) => {
+        alert('二维码过期');
+      });
+  });
+
+  document.getElementById('cancel').addEventListener('click', () => {
+    axios
+      .get('http://192.168.110.35:3000/qrcode/cancel?id=' + id)
+      .catch((e) => {
+        alert('二维码已过期');
+      });
+  });
+
+  document.getElementById('guang').addEventListener('click', () => {
+    axios
+      .get('http://192.168.110.35:3000/login', {
+        params: {
+          username: 'guang',
+          password: '222',
+        },
+      })
+      .then((res) => {
+        token = res.data.token;
+      });
+  });
+
+  document.getElementById('dong').addEventListener('click', () => {
+    axios
+      .get('http://192.168.110.35:3000/login', {
+        params: {
+          username: 'dong',
+          password: '111',
+        },
+      })
+      .then((res) => {
+        token = res.data.token;
+      });
+  });
+</script>
