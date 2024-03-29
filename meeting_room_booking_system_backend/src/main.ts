@@ -13,6 +13,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(new FormatResponseInterceptor())
   app.useGlobalInterceptors(new InvokeRecordInterceptor())
   app.useGlobalFilters(new UnloginFilter())
+  app.enableCors()
 
   const config = new DocumentBuilder()
     .setTitle('会议室预订系统')

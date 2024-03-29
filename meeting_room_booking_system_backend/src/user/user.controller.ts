@@ -129,6 +129,7 @@ export class UserController {
     vo.accessToken = this.jwtService.sign({
       userId: vo.userInfo.id,
       username: vo.userInfo.username,
+      email: vo.userInfo.email,
       roles: vo.userInfo.roles,
       permissions: vo.userInfo.permissions
     }, {
@@ -178,6 +179,7 @@ export class UserController {
       const access_token = this.jwtService.sign({
         userId: user.id,
         username: user.username,
+        email: user.email,
         roles: user.roles,
         permissions: user.permissions
       }, {
@@ -225,6 +227,7 @@ export class UserController {
     vo.accessToken = this.jwtService.sign({
       userId: vo.userInfo.id,
       username: vo.userInfo.username,
+      email: vo.userInfo.email,
       roles: vo.userInfo.roles,
       permissions: vo.userInfo.permissions
     }, {
@@ -250,6 +253,7 @@ export class UserController {
       const access_token = this.jwtService.sign({
         userId: user.id,
         username: user.username,
+        email: user.email,
         roles: user.roles,
         permissions: user.permissions
       }, {
@@ -312,7 +316,6 @@ export class UserController {
  * @param passwordDto 包含新密码信息的数据传输对象，由@Body()获取
  * @returns 返回更新密码操作的结果
  */
-  @ApiBearerAuth()
   @ApiBody({
     type: UpdateUserPasswordDto
   })
@@ -321,11 +324,15 @@ export class UserController {
     description: '验证码已失效/不正确'
   })
   @Post(['update_password', 'admin/update_password'])
-  @RequireLogin()
-  async updatePassword(@UserInfo('userId') userId: number, @Body() passwordDto: UpdateUserPasswordDto) {
-    return await this.userService.updatePassword(userId, passwordDto);
+  async updatePassword(@Body() passwordDto: UpdateUserPasswordDto) {
+    return await this.userService.updatePassword(passwordDto);
   }
 
+  /**
+   * 生成并发送重置密码的验证码
+   * @param address 用户的电子邮箱地址，用于接收验证码
+   * @returns 返回一个字符串，表示发送成功
+   */
   @Get('update_password/captcha')
   async updatePasswordCaptcha(@Query('address') address: string) {
     const code = Math.random().toString(36).substring(2, 8);
@@ -347,18 +354,18 @@ export class UserController {
   * @returns 返回一个字符串表示发送成功
   */
   @ApiBearerAuth()
-  @ApiQuery({
-    name: 'address',
-    description: '用户邮箱地址',
-    type: String
-  })
+  // @ApiQuery({
+  //   name: 'address',
+  //   description: '用户邮箱地址',
+  //   type: String
+  // })
   @ApiResponse({
     type: String,
     description: '发送成功'
   })
   @RequireLogin()
   @Get('update/captcha')
-  async updateCaptcha(@Query('address') address: string) {
+  async updateCaptcha(@UserInfo('email') address: string) {
     const code = Math.random().toString().slice(2, 8);
 
     await this.redisService.set(`update_user_captcha_${address}`, code, 10 * 60);
