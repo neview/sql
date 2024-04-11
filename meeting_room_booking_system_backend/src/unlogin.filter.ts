@@ -13,7 +13,7 @@ export class UnLoginException {
 export class UnloginFilter implements ExceptionFilter {
   catch(exception: UnLoginException, host: ArgumentsHost) {
     const response = host.switchToHttp().getResponse<Response>();
-
+    console.log(response)
     response.json({
       code: HttpStatus.UNAUTHORIZED,
       message: 'fail',
