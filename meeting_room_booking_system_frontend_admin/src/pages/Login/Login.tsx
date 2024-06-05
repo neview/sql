@@ -1,6 +1,8 @@
-import { Button, Checkbox, Form, Input } from "antd";
+import { Button, Checkbox, Form, Input, message } from "antd";
 import "./login.css";
 import { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { login } from "../../interfaces/interfaces";
 
 interface LoginUser {
   username: string;
@@ -13,12 +15,29 @@ const layout1 = {
 };
 
 export function Login() {
-  const onFinish = useCallback((values: LoginUser) => {
-    console.log("Success:", values);
+  const navigate = useNavigate();
+  const onFinish = useCallback(async (values: LoginUser) => {
+    // console.log("Success:", values);
+    const res = await login(values.username, values.password);
+
+    const { code, message: msg, data } = res.data;
+    if (res.status === 201 || code === 200) {
+      message.success("登录成功");
+
+      localStorage.setItem("access_token", data.accessToken);
+      localStorage.setItem("refresh_token", data.refreshToken);
+      localStorage.setItem("user_info", JSON.stringify(data.userInfo));
+
+      setTimeout(() => {
+        navigate("/user_manage");
+      }, 1000);
+    } else {
+      message.error(data || res.data.message);
+    }
   }, []);
   return (
     <div id="login-container">
-      <h1>会议室预定系统</h1>
+      {/* <h1>会议室预定系统</h1> */}
       <Form
         {...layout1}
         onFinish={onFinish}
