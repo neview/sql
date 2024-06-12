@@ -5,6 +5,7 @@ import {
   createBrowserRouter,
   Link,
   Outlet,
+  useLocation,
 } from "react-router-dom";
 import { Index } from "./pages/Index/Index";
 import { ErrorPage } from "./pages/ErrorPage/ErrorPage";
@@ -14,6 +15,9 @@ import { Menu } from "./pages/Menu/Menu";
 import { ModifyMenu } from "./pages/ModifyMenu/ModifyMenu";
 import { PasswordModify } from "./pages/PasswordModify/PasswordModify";
 import { InfoModify } from "./pages/InfoModify/InfoModify";
+import { MeetingRoomManage } from "./pages/MeetingRoomManage/MeetingRoomManage";
+import { BookingManage } from "./pages/BookingManage/BookingManage";
+import { Statistics } from "./pages/Statistics/Statistics";
 
 const routes = [
   {
@@ -26,8 +30,24 @@ const routes = [
         element: <Menu></Menu>,
         children: [
           {
+            path: "/",
+            element: <MeetingRoomManage />,
+          },
+          {
             path: "user_manage",
             element: <UserManage />,
+          },
+          {
+            path: "meeting_room_manage",
+            element: <MeetingRoomManage />,
+          },
+          {
+            path: "booking_manage",
+            element: <BookingManage />,
+          },
+          {
+            path: "statistics",
+            element: <Statistics />,
           },
         ],
       },

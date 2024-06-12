@@ -29,6 +29,9 @@ import { Register } from "./page/register/Register";
 import { UpdatePassword } from "./page/update_password/UpdatePassword";
 import { Index } from "./page/index";
 import { UpdateInfo } from "./page/update_info/UpdateInfo";
+import { MeetingRoomList } from "./page/meeting_room_list/MeetingRoomList";
+import { BookingHistory } from "./page/booking_history/BookingHistory";
+import { Menu } from "./page/menu/Menu";
 function Aaa() {
   return <div>aaa</div>;
 }
@@ -66,6 +69,24 @@ const routes = [
         path: "update_info",
         element: <UpdateInfo />,
       },
+      {
+        path: "/",
+        element: <Menu />,
+        children: [
+          {
+            path: "/",
+            element: <MeetingRoomList />,
+          },
+          {
+            path: "meeting_room_list",
+            element: <MeetingRoomList />,
+          },
+          {
+            path: "booking_history",
+            element: <BookingHistory />,
+          },
+        ],
+      },
     ],
   },
   {
@@ -81,7 +102,7 @@ const routes = [
     element: <UpdatePassword />,
   },
 ];
-const router = createBrowserRouter(routes);
+export const router = createBrowserRouter(routes);
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

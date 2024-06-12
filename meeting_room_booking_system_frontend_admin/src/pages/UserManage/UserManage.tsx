@@ -38,7 +38,7 @@ export function UserManage() {
         dataIndex: "headPic",
         render: (value) => {
           return value ? (
-            <Image width={50} src={`http://localhost:3005/${value}`} />
+            <Image width={50} src={`http://localhost:3000/${value}`} />
           ) : (
             ""
           );

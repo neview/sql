@@ -7,19 +7,11 @@ import { router } from "../..";
 const items: MenuProps["items"] = [
   {
     key: "1",
-    label: "会议室管理",
+    label: "会议室列表",
   },
   {
     key: "2",
-    label: "预定管理",
-  },
-  {
-    key: "3",
-    label: "用户管理",
-  },
-  {
-    key: "4",
-    label: "统计",
+    label: "预定历史",
   },
 ];
 
@@ -27,16 +19,10 @@ const handleMenuItemClick: MenuClickEventHandler = (info) => {
   let path = "";
   switch (info.key) {
     case "1":
-      path = "/meeting_room_manage";
+      path = "/meeting_room_list";
       break;
     case "2":
-      path = "/booking_manage";
-      break;
-    case "3":
-      path = "/user_manage";
-      break;
-    case "4":
-      path = "/statistics";
+      path = "/booking_history";
       break;
   }
   router.navigate(path);
@@ -46,18 +32,15 @@ export function Menu() {
   const location = useLocation();
 
   function getSelectedKeys() {
-    if (location.pathname === "/user_manage") {
-      return ["3"];
-    } else if (location.pathname === "/booking_manage") {
-      return ["2"];
-    } else if (location.pathname === "/meeting_room_manage") {
+    if (location.pathname === "/meeting_room_list") {
       return ["1"];
-    } else if (location.pathname === "/statistics") {
-      return ["4"];
+    } else if (location.pathname === "/booking_history") {
+      return ["2"];
     } else {
       return ["1"];
     }
   }
+
   return (
     <div id="menu-container">
       <div className="menu-area">
